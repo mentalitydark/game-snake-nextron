@@ -1,20 +1,13 @@
 import React from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 
 function Home() {
   return (
     <React.Fragment>
       <Head>
-        <title>Home - Nextron (with-typescript)</title>
+        <title>Home</title>
       </Head>
       <div>
-        <p>
-          ⚡ Electron + Next.js ⚡ -
-          <Link href="/next">
-            <a>Go to page</a>
-          </Link>
-        </p>
         <img src="/images/logo.png" />
       </div>
     </React.Fragment>

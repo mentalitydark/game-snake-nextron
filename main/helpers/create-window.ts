@@ -79,8 +79,11 @@ export default (windowName: string, options: BrowserWindowConstructorOptions): B
       contextIsolation: false,
       ...options.webPreferences,
     },
+    frame: true,
+    autoHideMenuBar: true,
   };
   win = new BrowserWindow(browserOptions);
+  win.setMenu(null)
 
   win.on('close', saveState);
 

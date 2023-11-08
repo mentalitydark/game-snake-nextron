@@ -1,16 +1,20 @@
 import React from 'react';
 import Head from 'next/head';
+import { GameProvider } from '../contexts/game';
+import { Game, Points } from '../components';
 
 function Home() {
   return (
-    <React.Fragment>
+    <GameProvider>
       <Head>
-        <title>Home</title>
+        <title>Snake Game</title>
+        <link rel="stylesheet" href="styles/reset.css" />
       </Head>
-      <div>
-        <img src="/images/logo.png" />
+      <div >
+        <Points />
+        <Game />
       </div>
-    </React.Fragment>
+    </GameProvider>
   );
 };
 

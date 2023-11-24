@@ -8,7 +8,6 @@ function Home() {
     <GameProvider>
       <Head>
         <title>Snake Game</title>
-        <link rel="stylesheet" href="styles/reset.css" />
       </Head>
       <div >
         <Points />

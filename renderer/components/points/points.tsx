@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { GameContext } from "../../contexts/game"
 
 export const Points = () => {
-  const {points} = useContext(GameContext)
+  const {points, pointsRef} = useContext(GameContext)
 
   return (
     <div style={{
@@ -15,8 +15,7 @@ export const Points = () => {
       height: 50
     }}
     >
-      <span>Pontos: {points}</span>
-      <span>Máximo de pontos: {points}</span>
+      <span>Pontos: <span ref={pointsRef}>{points()}</span></span>
     </div>
   )
 }

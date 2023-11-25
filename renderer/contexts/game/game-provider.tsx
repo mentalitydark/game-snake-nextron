@@ -1,17 +1,26 @@
-import React, { useState } from "react"
+import React, { useRef } from "react"
 import { GameContext } from "./game-context"
 
 export const GameProvider = ({ children }: { children: React.ReactNode}) => {
-  const [points, setPoints] = useState<number>(0)
+  const pointsRef = useRef<HTMLSpanElement>(null)
 
-  const addPoints = (point: number) => {
-    setPoints(p => p += point)
+  const points = (): number => {
+    if (pointsRef.current)
+      return parseInt(pointsRef.current.innerText)
+
+    return 0
+  }
+
+  const changePoints = (point: number) => {
+    if (pointsRef.current)
+      pointsRef.current.innerText = String(point)
   }
 
   return (
     <GameContext.Provider value={{
       points,
-      addPoints
+      changePoints,
+      pointsRef
     }}>
       {children}
     </GameContext.Provider>

@@ -7,7 +7,7 @@ export interface GameContextProps {
     overlayTextSecondaryRef: MutableRefObject<HTMLSpanElement>
   }
   functions: {
-    changePoints: (p: number) => void
+    setPoints: (p: number) => void
     setOverlayTextPrimary: (v: string) => void
     setOverlayTextSecondary: (v: string) => void
   }

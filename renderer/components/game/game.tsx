@@ -1,17 +1,18 @@
 import React from "react"
 import { useGame } from "./use-game"
-import { Game as CGame } from "../../classes";
+import { GameScreen, OverlayScreen } from "./components";
 
 export const Game = React.memo(function Game() {
-  const { canvasRef } = useGame()
+  const { canvasRef, overlayScreenRef, overlayTextPrimaryRef, overlayTextSecondaryRef } = useGame()
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={CGame.DIMENSION.width}
-      height={CGame.DIMENSION.height}
-      style={{ border: '0px solid red', width: '100%', height: '100%' }}
-    />
+    <div style={{position: 'relative'}}>
+      <OverlayScreen
+        ref={overlayScreenRef}
+        textPrimaryRef={overlayTextPrimaryRef}
+        textSecondaryRef={overlayTextSecondaryRef}
+      />
+      <GameScreen ref={canvasRef} />
+    </div>
   )
-}
-)
+})

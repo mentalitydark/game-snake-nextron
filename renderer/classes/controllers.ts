@@ -8,9 +8,9 @@ export class Controllers implements IControllers {
     this.controllers = {}
   }
 
-  public keyPress(this: Game, event: KeyboardEvent): void {
-    if (this.controllers.hasKeys(event.key.toLocaleLowerCase()))
-      this.controllers.getControllers()[event.key.toLocaleLowerCase()]()
+  public keyPress(this: Game, { key }: KeyboardEvent): void {
+    if (this.controllers.hasKeys(key.toLocaleLowerCase()))
+      this.controllers.getControllers()[key.toLocaleLowerCase()]()
   }
 
   public hasKeys(key: string): boolean {

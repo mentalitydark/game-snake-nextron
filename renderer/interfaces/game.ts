@@ -5,7 +5,8 @@ import { GameStatus } from "../enums"
 export interface GameConstructor {
   context: CanvasRenderingContext2D
   document: Document
-  changePointsCallback: (p: number) => void
+  setPointsCallback: (p: number) => void
+  endScreenCallback: (tp: string, ts: string) => void
 }
 
 export interface Game {
@@ -15,6 +16,6 @@ export interface Game {
   points: number
   gameStatus: GameStatus
   context: CanvasRenderingContext2D
-  changePointsCallback: (point: number) => void
+  setPointsCallback: (point: number) => void
   start: () => void
 }

@@ -16,9 +16,10 @@ export class Game implements IGame {
   public controllers: Controllers
   public context: CanvasRenderingContext2D
   public gameStatus: GameStatus
-  public changePointsCallback: (p: number) => void
+  public setPointsCallback: (p: number) => void
+  public endScreenCallback: (tp: string, ts: string) => void
 
-  public constructor({context, document, changePointsCallback}: GameConstructor) {
+  public constructor({context, document, setPointsCallback, endScreenCallback}: GameConstructor) {
     this.gameStatus = GameStatus.PAUSED
     this.points = 0
 
@@ -26,9 +27,10 @@ export class Game implements IGame {
     this.fruit = new Fruit(this.snake)
     
     this.context = context
-    this.changePointsCallback = changePointsCallback
+    this.setPointsCallback = setPointsCallback
 
     this.attributeControllers()
+    this.endScreenCallback = endScreenCallback
     document.addEventListener('keydown', this.controllers.keyPress.bind(this))
   }
 
@@ -36,6 +38,14 @@ export class Game implements IGame {
     this.moveSnake()
     this.draw()
     this.pickedFruit()
+  }
+
+  private restart() {
+    this.snake = new Snake()
+    this.fruit = new Fruit(this.snake)
+    this.points = 0
+    this.setPointsCallback(this.points)
+    this.gameStatus = GameStatus.PLAYING
   }
 
   private draw() {
@@ -61,7 +71,7 @@ export class Game implements IGame {
       this.fruit = new Fruit(this.snake)
       this.points++
       this.snake.tail++
-      this.changePointsCallback(this.points)
+      this.setPointsCallback(this.points)
     }
   }
 
@@ -86,8 +96,10 @@ export class Game implements IGame {
     if (this.snake.position.y < 0)
       this.snake.moveTo(null, Game.DIMENSION.height - Game.SNAKE_STEP)
       
-    if(this.snake.checkIfIsDead())
+    if(this.snake.checkIfIsDead()) {
       this.gameStatus = GameStatus.END_GAME
+      this.endScreenCallback("End Game", "Press enter to restart")
+    }
   }
 
   private attributeControllers(): void {
@@ -96,6 +108,9 @@ export class Game implements IGame {
     this.controllers.addCommand(['enter'], () => {
       if(this.gameStatus === GameStatus.PAUSED)
         this.gameStatus = GameStatus.PLAYING
+
+      if (this.gameStatus === GameStatus.END_GAME)
+        this.restart()
     })
 
     this.controllers.addCommand(['arrowup', 'w'], () => {

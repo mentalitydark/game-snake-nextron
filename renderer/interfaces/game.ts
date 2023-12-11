@@ -1,21 +1,17 @@
 import { Fruit, Snake } from "../classes"
-import { Controllers } from "../classes/controllers"
+import { Controller } from "../classes"
 import { GameStatus } from "../enums"
+import { CanvasElement } from "./canvas-element"
 
 export interface GameConstructor {
-  context: CanvasRenderingContext2D
-  document: Document
-  setPointsCallback: (p: number) => void
-  endScreenCallback: (tp: string, ts: string) => void
+  showPointsCallback: (val: number) => void
+  showOverlayScreenCallback: (prop: {textPrimary?: string, textSecondary?: string, show: boolean}) => void
 }
 
-export interface Game {
-  fruit: Fruit
+export interface Game extends CanvasElement {
   snake: Snake
-  controllers: Controllers
+  status: GameStatus
   points: number
-  gameStatus: GameStatus
-  context: CanvasRenderingContext2D
-  setPointsCallback: (point: number) => void
-  start: () => void
+  fruit: Fruit
+  controller: Controller
 }

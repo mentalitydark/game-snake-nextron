@@ -1,13 +1,11 @@
+import { CanvasElement } from "./canvas-element"
 import { Position } from "./position"
 
-export interface Snake {
+export interface Snake extends CanvasElement {
+  body: Position[]
   position: Position
   direction: Position
-  tail: number
-  body: Position[]
   newDirection: boolean
-  moveTo(x: number, y: number): void
-  draw(context: CanvasRenderingContext2D): void
-  attBodyPosition(): void
-  checkIfIsDead(): boolean
+  alive: boolean
+  tail: number
 }

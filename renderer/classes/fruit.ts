@@ -3,30 +3,38 @@ import { Game } from "./game";
 import { Snake } from "./snake";
 
 export class Fruit implements IFruit {
-  public position: Position;
+  private _position: Position;
+  private _snake: Snake
+  private _picked: boolean
 
   public constructor(snake: Snake) {
-    this.position = {
-      x: Math.floor(Math.random() * (Game.DIMENSION.width / Game.SNAKE_STEP)) * Game.SNAKE_STEP,
-      y: Math.floor(Math.random() * (Game.DIMENSION.height / Game.SNAKE_STEP)) * Game.SNAKE_STEP
-    }
+    this._position = Game.RandomPosition()
+    this._snake = snake
 
-    this.checkIfValidPosition(snake)
+    this.checkIfValidPosition()
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
+  get position() { return this._position }
+  get picked() { return this._picked }
+
+  public draw = (context: CanvasRenderingContext2D): void => {
     Game.createSquare(context, this.position, '#FF0000')
   }
 
-  private checkIfValidPosition(snake: Snake) {
-    for (const position of snake.body) {
-      if (position.x === this.position.x && position.y === this.position.y) {
-        this.position = {
-          x: Math.floor(Math.random() * (Game.DIMENSION.width / Game.SNAKE_STEP)) * Game.SNAKE_STEP,
-          y: Math.floor(Math.random() * (Game.DIMENSION.height / Game.SNAKE_STEP)) * Game.SNAKE_STEP
-        }
+  public update = () => {
+    this.checkIfPicked()
+  }
 
-        this.checkIfValidPosition(snake)
+  private checkIfPicked = () => {
+    if (this._snake.position.x === this._position.x && this._snake.position.y === this._position.y)
+      this._picked = true
+  }
+
+  private checkIfValidPosition = () => {
+    for (const position of this._snake.body) {
+      if (position.x === this.position.x && position.y === this.position.y) {
+        this._position = Game.RandomPosition()
+        this.checkIfValidPosition()
       }
     }
   }

@@ -1,62 +1,119 @@
+import { Direction } from "../enums";
 import { Snake as ISnake, Position } from "../interfaces"
 import { Game } from "./game";
 
 export class Snake implements ISnake {
-  public position: Position
-  public body: Position[]
-  public direction: Position
-  public tail: number
-  public newDirection: boolean
+  private _direction: Position
+  private _newDirection: boolean
+  private _position: Position
+  private _body: Position[]
+  private _alive: boolean
+  private _tail: number
+  private colorHead: string = '#B1FF26'
+  private colorBody: string = '#689616'
 
   public constructor() {
-    this.position = {
-      x: Math.floor(Math.random() * (Game.DIMENSION.width / Game.SNAKE_STEP)) * Game.SNAKE_STEP,
-      y: Math.floor(Math.random() * (Game.DIMENSION.height / Game.SNAKE_STEP)) * Game.SNAKE_STEP
-    }
-    this.body = [this.position]
-    this.tail = 5
-    this.direction = { x: 1, y: 0 }
+    this._position = Game.RandomPosition()
+
+    this._body = [this._position]
+    this._tail = 5
+    this._direction = { x: 1, y: 0 }
+    this._alive = true
   }
 
-  public changeDirection(x: number, y: number): void {
-    if (this.newDirection)
-      return
-
-    this.direction = {x, y}
-    this.newDirection = true
-  }
-
-  public moveTo(x: number = null, y: number = null) {
-    if (x === null)
-      this.position.y = y
-    else if (y === null)
-      this.position.x = x
-    else
-      this.position = {x, y}
-
-    this.newDirection = false
-  }
-  
+  get direction() { return this._direction }
+  get newDirection() { return this._newDirection }
+  get alive() { return this._alive }
+  get tail() { return this._tail }
+  get body() { return this._body }
+  get position() { return this._position }
+  set tail(val: number) { this._tail = val }
+    
   public draw(context: CanvasRenderingContext2D): void {
-    this.body.forEach((p, i) => {
-      Game.createSquare(context, p, i === this.body.length-1 ? '#B1FF26' : '#689616')
+    this._body.forEach((position, index) => {
+      Game.createSquare(context, position, index === this._body.length-1 ? this.colorHead : this.colorBody)
     })
   }
 
-  public attBodyPosition(): void {
-    this.body.push(this.position)
-
-    if (this.body.length > this.tail)
-      this.body.shift()
+  public update = () => {
+    this.updateBody()
+    this.updatePosition()
+    this.updateAliveStatus()
   }
 
-  public checkIfIsDead(): boolean {
-    for (const position of this.body) {
-      if(position.x === this.position.x && position.y === this.position.y)
-        return true
+  public teleport = ({x, y}: {x?: number, y?: number}) => {
+    if (x !== undefined && y !== undefined)
+      this._position = {x, y}
+    else if (x !== undefined)
+      this._position.x = x
+    else if (y !== undefined)
+      this._position.y = y
+  }
+
+  public move = (direction: Direction) => {
+    if (this._newDirection)
+      return
+
+    switch(direction) {
+      case Direction.Up:
+        this.moveUp();
+        break;
+      case Direction.Right:
+        this.moveRight();
+        break;
+      case Direction.Down:
+        this.moveDown();
+        break;
+      case Direction.Left:
+        this.moveLeft();
+        break;
     }
 
-    return false
+    this._newDirection = true
   }
 
+  private moveUp = () => {
+    if(this._direction.y === 1)
+      return
+    this._direction = { x: 0, y: -1 }
+  }
+  private moveRight = () => {
+    if(this._direction.x === -1)
+      return
+    this._direction = { x: 1, y: 0 }
+  }
+  private moveDown = () => {
+    if(this._direction.y === -1)
+      return
+    this._direction = { x: 0, y: 1 }
+  }
+  private moveLeft = () => {
+    if(this._direction.x === 1)
+      return
+    this._direction = { x: -1, y: 0 }
+  }
+
+  private updatePosition = () => {
+    this._position = {
+      x: this._position.x + this._direction.x * Game.SNAKE_STEP,
+      y: this._position.y + this._direction.y * Game.SNAKE_STEP
+    }
+
+    this._newDirection = false
+  }
+
+  private updateBody = () => {
+    this._body.push(this._position)
+    if (this._body.length > this._tail)
+      this._body.shift()
+  }
+
+  private updateAliveStatus = () => {
+    for (const position of this._body.slice(0, this._body.length-1)) {
+      if (position.x === this._position.x && position.y === this._position.y) {
+        this._alive = false
+        break;
+      }
+    }
+  }
 }

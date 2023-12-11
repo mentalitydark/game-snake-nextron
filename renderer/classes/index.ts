@@ -1,4 +1,4 @@
 export * from './fruit'
 export * from './game'
 export * from './snake'
-export * from './controllers'
+export * from './controller'

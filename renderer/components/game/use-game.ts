@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { Game } from "../../classes"
 import { GameContext } from "../../contexts/game"
 
@@ -11,39 +11,22 @@ export function useGame() {
   } = useContext(GameContext)
 
   useEffect(() => {
-    const showOverlayScreen = (textPrimary: string = "", textSecondary: string = "") => {
-      overlayScreenRef.current.style.display = 'flex'
-      setOverlayTextPrimary(textPrimary)
-      setOverlayTextSecondary(textSecondary)
+    const showOverlayScreen = ({textPrimary, textSecondary, show}: {textPrimary?: string, textSecondary?: string, show: boolean}) => {
+      overlayScreenRef.current.style.display = show ? 'flex' : 'none'
+      setOverlayTextPrimary(textPrimary || '')
+      setOverlayTextSecondary(textSecondary || '')
     }
 
     let animationFrameId = 0
-
-    const hiddenOverlayScreen = () => {
-      overlayScreenRef.current.style.display = 'none'
-    }
-
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d')
       
       const game = new Game({
-        context,
-        document: window.document,
-        setPointsCallback: setPoints,
-        endScreenCallback: showOverlayScreen
+        showPointsCallback: setPoints,
+        showOverlayScreenCallback: showOverlayScreen
       })
-      animationFrameId = requestAnimationFrame(Game.updateFrame(game.start.bind(game)))
+      animationFrameId = requestAnimationFrame(Game.updateFrame(game.loop.bind(game, context)))
     }
-
-    window.document.addEventListener("keydown", ({key}) => {
-      if (overlayScreenRef.current) {
-        if (key === "Enter")
-          hiddenOverlayScreen()
-
-        if (key === "Escape")
-          showOverlayScreen("Paused", "Press enter to continue...")
-      }
-    })
 
     return () => {
       cancelAnimationFrame(animationFrameId)
